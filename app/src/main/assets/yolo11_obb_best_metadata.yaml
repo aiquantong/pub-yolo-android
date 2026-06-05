@@ -1,0 +1,58 @@
+description: Ultralytics YOLO11n-obb model trained on coco8-obb-win.yaml
+author: Ultralytics
+date: '2026-05-29T08:28:26.412672'
+version: 8.4.56
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: obb
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: needle_1
+  1: needle_2
+  2: meter_p_0-1N6
+  3: scale_p_0-1N6_1
+  4: scale_p_0-1N6_2
+  5: meter_p_0-1
+  6: scale_p_0-1_1
+  7: scale_p_0-1_2
+  8: meter_p_0-2N5
+  9: scale_p_0-2N5_1
+  10: scale_p_0-2N5_2
+  11: meter_p_digital
+  12: meter_e_w_wheel
+  13: meter_t_-20-80
+  14: scale_t_-20-80_1
+  15: scale_t_-20-80_2
+  16: meter_t_0-100
+  17: scale_t_0-100_1
+  18: scale_t_0-100_2
+  19: meter_t_0-120
+  20: scale_t_0-120_1
+  21: scale_t_0-120_2
+  22: meter_t_0-50
+  23: scale_t_0-50_1
+  24: scale_t_0-50_2
+  25: num_0
+  26: num_1
+  27: num_2
+  28: num_3
+  29: num_4
+  30: num_5
+  31: num_6
+  32: num_7
+  33: num_8
+  34: num_9
+  35: num_node
+args:
+  data: null
+  batch: 1
+  fraction: 1.0
+  half: true
+  int8: false
+  nms: false
+channels: 3
+end2end: false

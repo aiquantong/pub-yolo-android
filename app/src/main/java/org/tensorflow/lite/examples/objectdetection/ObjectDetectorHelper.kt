@@ -18,6 +18,8 @@ package org.tensorflow.lite.examples.objectdetection
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.SystemClock
+import com.ultralytics.yolo.predict.detect.DetectedObject
+import com.ultralytics.yolo.meter.MeterReading
 import org.tensorflow.lite.examples.objectdetection.detectors.ObjectDetection
 import org.tensorflow.lite.task.core.BaseOptions
 
@@ -160,6 +162,7 @@ class ObjectDetectorHelper(
         if (results != null) {
             objectDetectorListener?.onResults(
                 results.detections,
+                results.rawDetectedObjects,
                 inferenceTime,
                 results.image.height,
                 results.image.width
@@ -172,6 +175,7 @@ class ObjectDetectorHelper(
         fun onError(error: String)
         fun onResults(
             results: List<ObjectDetection>,
+            rawDetectedObjects: List<DetectedObject>?,
             inferenceTime: Long,
             imageHeight: Int,
             imageWidth: Int

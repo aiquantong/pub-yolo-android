@@ -9,6 +9,7 @@ public class DetectedObject {
     public final RectF boundingBox;
     public final int index;
     public final String label;
+    public final float angle;
 
     public DetectedObject(
             final Float confidence,
@@ -20,6 +21,21 @@ public class DetectedObject {
         this.boundingBox = boundingBox;
         this.index = index;
         this.label = label;
+        this.angle = 0f;
+    }
+
+    public DetectedObject(
+            final Float confidence,
+            final RectF boundingBox,
+            final int index,
+            final String label,
+            final float angle
+    ) {
+        this.confidence = confidence;
+        this.boundingBox = boundingBox;
+        this.index = index;
+        this.label = label;
+        this.angle = angle;
     }
 
     @Keep

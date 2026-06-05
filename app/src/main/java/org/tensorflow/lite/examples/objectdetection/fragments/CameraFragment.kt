@@ -43,6 +43,9 @@ import org.tensorflow.lite.examples.objectdetection.R
 import org.tensorflow.lite.examples.objectdetection.databinding.FragmentCameraBinding
 import org.tensorflow.lite.examples.objectdetection.detectors.ObjectDetection
 import java.util.LinkedList
+import com.ultralytics.yolo.predict.detect.DetectedObject
+import com.ultralytics.yolo.meter.MeterReading
+import com.ultralytics.yolo.meter.MeterReadingProcessor
 
 class CameraFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
 
@@ -302,6 +305,7 @@ class CameraFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     // to scale and place bounding boxes properly through OverlayView
     override fun onResults(
         results: List<ObjectDetection>,
+        rawDetectedObjects: List<DetectedObject>?,
         inferenceTime: Long,
         imageHeight: Int,
         imageWidth: Int
@@ -316,6 +320,24 @@ class CameraFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
                 imageHeight,
                 imageWidth
             )
+
+            // Process meter readings if raw objects are available
+            val meterReadings = if (rawDetectedObjects != null) {
+                MeterReadingProcessor.processDetections(rawDetectedObjects)
+            } else {
+                emptyList()
+            }
+
+            // Pass meter readings to overlay
+            fragmentCameraBinding.overlay.setMeterReadings(meterReadings)
+
+            // If there are meter readings, update the UI to show them
+            if (meterReadings.isNotEmpty()) {
+                Log.d(TAG, "Detected ${meterReadings.size} meter readings")
+                for (reading in meterReadings) {
+                    Log.d(TAG, "Meter: ${reading.meterType}, Value: ${reading.readingString}")
+                }
+            }
 
             // Force a redraw
             fragmentCameraBinding.overlay.invalidate()

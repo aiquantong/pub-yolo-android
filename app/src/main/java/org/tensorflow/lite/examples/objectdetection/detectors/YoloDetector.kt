@@ -28,13 +28,28 @@ class YoloDetector(
         yolo.setIouThreshold(iouThreshold)
         yolo.setConfidenceThreshold(confidenceThreshold)
 
-        // val modelPath = "YOLO11n-catsdogs_float32.tflite"
-        // val metadataPath = "metadata-catsdogs.yaml"
-        val modelPath = "yolo11n_float32.tflite"
-        val metadataPath = "metadata.yaml"
+        // Uncomment one of the model pairs to use:
+
+        // Option 1: YOLO11 (end2end=false, standard output)
+         val modelPath = "yolo26_obb_best_float16.tflite"
+         val metadataPath = "yolo26_obb_best_metadata.yaml"
+
+//        val modelPath = "yolo26n_float16.tflite"
+//        val metadataPath = "yolo26n_metadata.yaml"
+
+//        val modelPath = "yolo26n_obb_float16.tflite"
+//        val metadataPath = "yolo26n_obb_metadata.yaml"
+
+        // Option 2: YOLO26 (end2end=true, optimized output)
+//        val modelPath = "yolo26_obb_best_float16.tflite"
+//        val metadataPath = "yolo26_obb_best_metadata.yaml"
+
+        // Option 3: YOLO11n COCO (standard detection)
+        // val modelPath = "yolo11n_float32.tflite"
+        // val metadataPath = "metadata.yaml"
 
         val config = LocalYoloModel(
-            "detect",
+            "obb",
             "tflite",
             modelPath,
             metadataPath,
@@ -50,7 +65,7 @@ class YoloDetector(
 
     }
 
-    override fun detect(image: TensorImage, imageRotation: Int): DetectionResult  {
+    override fun detect(image: TensorImage, imageRotation: Int): DetectionResult {
 
         val bitmap = image.bitmap
 
@@ -94,13 +109,15 @@ class YoloDetector(
             )
             val detection = ObjectDetection(
                 bbox,
-                category
+                category,
+                result.angle
             )
             detections.add(detection)
         }
 
         val ret = DetectionResult(ppImage, detections)
         ret.info = yolo.stats
+        ret.rawDetectedObjects = results
         return ret
 
     }

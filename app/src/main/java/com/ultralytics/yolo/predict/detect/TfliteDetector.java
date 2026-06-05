@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
 public class TfliteDetector extends Detector {
 
 
@@ -60,6 +59,7 @@ public class TfliteDetector extends Detector {
     private Object[] inputArray;
     private int outputShape2;
     private int outputShape3;
+    private int[] outputTensorShape;
     private float[][] output;
     private long lastFpsTime = System.currentTimeMillis();
     private Map<Integer, Object> outputMap;
@@ -68,12 +68,14 @@ public class TfliteDetector extends Detector {
     private FloatResultCallback fpsRateCallback;
 
     private static final float Nanos2Millis = 1 / 1e6f;
+
     public class Stats {
         private float imageSetupTime;
         private float inferenceTime;
         private float postProcessTime;
 
     }
+
     public Stats stats;
 
     private ByteBuffer imgData;
@@ -130,7 +132,6 @@ public class TfliteDetector extends Detector {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true);
         return resizedBitmap;
     }
-
 
 
     @Override
@@ -210,9 +211,25 @@ public class TfliteDetector extends Detector {
             this.interpreter = new Interpreter(buffer, interpreterOptions);
         }
 
-        int[] outputShape = interpreter.getOutputTensor(0).shape();
-        outputShape2 = outputShape[1];
-        outputShape3 = outputShape[2];
+        outputTensorShape = interpreter.getOutputTensor(0).shape();
+        // Print output shape for debugging
+        System.out.print("Output tensor shape: [");
+        for (int i = 0; i < outputTensorShape.length; i++) {
+            System.out.print(outputTensorShape[i]);
+            if (i < outputTensorShape.length - 1) System.out.print(", ");
+        }
+        System.out.println("]");
+
+        if (isEnd2End) {
+            // End2End model - output shape could be [1, num_detections, 6] or similar
+            // We need to handle it differently
+            outputShape2 = outputTensorShape[1];
+            outputShape3 = outputTensorShape.length > 2 ? outputTensorShape[2] : 1;
+        } else {
+            // Standard YOLO model
+            outputShape2 = outputTensorShape[1];
+            outputShape3 = outputTensorShape[2];
+        }
         output = new float[outputShape2][outputShape3];
     }
 
@@ -283,7 +300,6 @@ public class TfliteDetector extends Detector {
     }
 
 
-
     private ArrayList<DetectedObject> runInference() {
         if (interpreter != null) {
 
@@ -303,20 +319,29 @@ public class TfliteDetector extends Detector {
                     }
                 }
 
-
                 startTime = System.nanoTime();
-
-                ArrayList<DetectedObject> ret = PostProcessUtils.postprocess(
-                        output,
-                        outputShape3,
-                        outputShape2,
-                        (float) confidenceThreshold,
-                        (float) iouThreshold,
-                        numItemsThreshold,
-                        numClasses,
-                        labels
-                );
-
+                ArrayList<DetectedObject> ret;
+                if (isEnd2End) {
+                    ret = PostProcessUtils.parseEnd2EndOutput(
+                            output,
+                            outputTensorShape,
+                            (float) confidenceThreshold,
+                            (float) iouThreshold,
+                            numItemsThreshold,
+                            labels
+                    );
+                } else {
+                    ret = PostProcessUtils.postprocess(
+                            output,
+                            outputShape3,
+                            outputShape2,
+                            (float) confidenceThreshold,
+                            (float) iouThreshold,
+                            numItemsThreshold,
+                            numClasses,
+                            labels
+                    );
+                }
 
                 stats.postProcessTime = (System.nanoTime() - startTime) * Nanos2Millis;
 
@@ -327,8 +352,6 @@ public class TfliteDetector extends Detector {
         //return new float[0][];
         return new ArrayList<>();
     }
-
-
 
 
 }

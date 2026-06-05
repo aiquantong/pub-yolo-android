@@ -23,6 +23,7 @@ public abstract class Predictor {
     public static  int INPUT_SIZE = 320;
     protected final Context context;
     public final ArrayList<String> labels = new ArrayList<>();
+    protected boolean isEnd2End = false;
 
     protected Predictor(Context context) {
         this.context = context;
@@ -45,6 +46,13 @@ public abstract class Predictor {
             INPUT_SIZE = imgszArray.get(0)>=imgszArray.get(1)?imgszArray.get(0):imgszArray.get(1);
             System.out.println("INPUT_SIZE:"+ INPUT_SIZE);
         }  
+
+        // Read end2end parameter
+        Object end2endObj = data.get("end2end");
+        if (end2endObj != null) {
+            isEnd2End = (Boolean) end2endObj;
+            System.out.println("end2end:" + isEnd2End);
+        }
 
         labels.clear();
         labels.addAll(names.values());
