@@ -20,19 +20,19 @@ public class MeterReadingProcessor {
     private static final String TAG = "MeterReadingProcessor";
 
     // 仪表范围定义
-    private static final Map<String, MeterRange> METER_RANGES = new HashMap<>();
+    private static final Map<String, MeterRangeConfig> METER_RANGES = new HashMap<>();
 
     static {
         // 压力仪表
-        METER_RANGES.put("meter_p_0-1N6", new MeterRange(0.0f, 1.6f, "bar"));
-        METER_RANGES.put("meter_p_0-1", new MeterRange(0.0f, 1.0f, "bar"));
-        METER_RANGES.put("meter_p_0-2N5", new MeterRange(0.0f, 2.5f, "bar"));
+        METER_RANGES.put("meter_p_0-1N6", new MeterRangeConfig(0.0f, 1.6f, "bar"));
+        METER_RANGES.put("meter_p_0-1", new MeterRangeConfig(0.0f, 1.0f, "bar"));
+        METER_RANGES.put("meter_p_0-2N5", new MeterRangeConfig(0.0f, 2.5f, "bar"));
 
         // 温度仪表
-        METER_RANGES.put("meter_t_-20-80", new MeterRange(-20f, 80f, "°C"));
-        METER_RANGES.put("meter_t_0-100", new MeterRange(0f, 100f, "°C"));
-        METER_RANGES.put("meter_t_0-120", new MeterRange(0f, 120f, "°C"));
-        METER_RANGES.put("meter_t_0-50", new MeterRange(0f, 50f, "°C"));
+        METER_RANGES.put("meter_t_-20-80", new MeterRangeConfig(-20f, 80f, "°C"));
+        METER_RANGES.put("meter_t_0-100", new MeterRangeConfig(0f, 100f, "°C"));
+        METER_RANGES.put("meter_t_0-120", new MeterRangeConfig(0f, 120f, "°C"));
+        METER_RANGES.put("meter_t_0-50", new MeterRangeConfig(0f, 
     }
 
     /**
@@ -135,10 +135,10 @@ public class MeterReadingProcessor {
             List<DetectedObject> scales) {
 
         // 获取仪表范围
-        MeterRange range = METER_RANGES.get(meterType);
+        MeterRangeConfig range = METER_RANGES.get(meterType);
         if (range == null) {
             // 默认范围
-            range = new MeterRange(0, 100, "unit");
+            range = new MeterRangeConfig(0, 100, 0, 180, "unit");
         }
 
         RectF needleBox = needle.boundingBox;
