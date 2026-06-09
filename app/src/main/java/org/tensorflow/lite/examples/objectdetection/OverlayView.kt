@@ -32,6 +32,7 @@ import org.tensorflow.lite.examples.objectdetection.detectors.ObjectDetection
 import java.util.LinkedList
 import kotlin.math.max
 import org.tensorflow.lite.task.vision.detector.Detection
+import kotlin.math.abs
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -66,30 +67,30 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     private fun initPaints() {
         textBackgroundPaint.color = Color.BLACK
         textBackgroundPaint.style = Paint.Style.FILL
-        textBackgroundPaint.textSize = 40f
+        textBackgroundPaint.textSize = 30f
 
         textPaint.color = Color.WHITE
         textPaint.style = Paint.Style.FILL
-        textPaint.textSize = 40f
+        textPaint.textSize = 30f
 
         boxPaint.color = ContextCompat.getColor(context!!, R.color.bounding_box_color)
-        boxPaint.strokeWidth = 4F
+        boxPaint.strokeWidth = 2F
         boxPaint.style = Paint.Style.STROKE
 
         obbPaint.color = Color.GREEN
-        obbPaint.strokeWidth = 8F
+        obbPaint.strokeWidth = 2F
         obbPaint.style = Paint.Style.STROKE
         obbPaint.setShadowLayer(4f, 0f, 0f, Color.BLACK)
 
         // 仪表读数画笔
         meterPaint.color = Color.parseColor("#FF5722")
-        meterPaint.strokeWidth = 12f
+        meterPaint.strokeWidth = 8f
         meterPaint.style = Paint.Style.STROKE
         meterPaint.setShadowLayer(6f, 0f, 0f, Color.parseColor("#80000000"))
 
         meterTextPaint.color = Color.WHITE
         meterTextPaint.style = Paint.Style.FILL
-        meterTextPaint.textSize = 50f
+        meterTextPaint.textSize = 30f
         meterTextPaint.isFakeBoldText = true
     }
 
@@ -112,12 +113,12 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             val centerY = top + height / 2
 
             // Draw OBB (Oriented Bounding Box) if angle is not zero
-            if (angle > 0.1f) {
+            val rotationDegrees = Math.toDegrees(angle.toDouble()).toFloat()
+            if (abs(rotationDegrees) > 0.1f) {
                 // Save canvas state
                 canvas.withTranslation(centerX, centerY) {
                     // Translate to center of bounding box
                     // Rotate by the angle (convert radians to degrees if needed)
-                    val rotationDegrees = Math.toDegrees(angle.toDouble()).toFloat()
                     rotate(rotationDegrees)
 
                     // Draw rotated rectangle centered at origin

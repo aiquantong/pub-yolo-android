@@ -31,7 +31,7 @@ class YoloDetector(
         // Uncomment one of the model pairs to use:
 
         // Option 1: YOLO11 (end2end=false, standard output)
-         val modelPath = "yolo26_obb_best_float16.tflite"
+         val modelPath = "yolo26_obb_best_float32.tflite"
          val metadataPath = "yolo26_obb_best_metadata.yaml"
 
 //        val modelPath = "yolo26n_float16.tflite"

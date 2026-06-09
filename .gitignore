@@ -1,0 +1,4 @@
+app/.cxx/*
+.gradle/*
+app/build/*
+.workbuddy/*
